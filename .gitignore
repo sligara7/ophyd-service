@@ -16,3 +16,6 @@ htmlcov/
 
 # OS
 .DS_Store
+
+# reflow2 design graph (binary RocksDB store — must not be committed)
+.reflow2/
