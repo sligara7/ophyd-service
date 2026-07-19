@@ -1292,7 +1292,12 @@ def test_http_server_manager_kill(re_manager, fastapi_server):  # noqa F811
 
     resp = request_to_json("post", "/test/manager/kill")
     assert "success" not in resp
-    assert "Request timeout: ZMQ communication error: timeout occurred" in resp["detail"]
+    # Assert only the stable prefix. The trailing text is str(ex) from the bare
+    # 'except Exception' in ZMQCommSendAsync.send_message (common/comms.py), so a
+    # timeout surfaces as either "timeout occurred" or pyzmq's EAGAIN message
+    # "Resource temporarily unavailable" depending on which layer trips first.
+    # Matching the full string made this test flaky on CI.
+    assert "Request timeout: ZMQ communication error:" in resp["detail"]
 
     ttime.sleep(10)
 
